@@ -1,3 +1,4 @@
+
 name: Gradle Docker CI/CD
 
 on: [pull_request]
@@ -9,14 +10,8 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
-    - uses: actions/checkout@master
-    - name: Test echo
-      run: echo "GITHUB_REF: ${GITHUB_REF},\nGITHUB_HEAD_REF: ${GITHUB_HEAD_REF},\nGITHUB_BASE_REF: ${GITHUB_BASE_REF} "
-    - name: Build and Publish to Docker Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: redpillanalytics/docker-gradle
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        snapshot: true
-        dockerfile: Dockerfile
+    - uses: actions/checkout@v1
+    - name: Test echos
+      run: echo "GITHUB_REF: ${GITHUB_REF},\nGITHUB_HEAD_REF: ${GITHUB_HEAD_REF},\nGITHUB_BASE_REF: ${GITHUB_BASE_REF}"
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:${{ github.ref }}
