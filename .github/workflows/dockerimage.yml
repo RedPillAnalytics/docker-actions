@@ -1,4 +1,4 @@
-
+    
 name: Gradle Docker CI/CD
 
 on: [pull_request]
@@ -10,7 +10,12 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
-    - uses: actions/checkout@v1
-    - run: echo $GITHUB_REF, $GITHUB_HEAD_REF, $GITHUB_BASE_REF
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:${{ github.ref }}
+    - uses: actions/checkout@master
+    - name: Build and Publish to Docker Registry
+      uses: RedPillAnalytics/Publish-Docker-Github-Action@master
+      with:
+        name: redpillanalytics/docker-gradle
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        snapshot: true
+        dockerfile: Dockerfile
