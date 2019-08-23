@@ -10,6 +10,8 @@ jobs:
  
     steps:
     - uses: actions/checkout@master
+    - name: Test echo
+      run: echo "GITHUB_REF: ${GITHUB_REF},\nGITHUB_HEAD_REF: ${GITHUB_HEAD_REF},\nGITHUB_BASE_REF: ${GITHUB_BASE_REF} "
     - name: Build and Publish to Docker Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
