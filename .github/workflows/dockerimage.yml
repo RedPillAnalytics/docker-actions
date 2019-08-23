@@ -11,6 +11,6 @@ jobs:
  
     steps:
     - uses: actions/checkout@v1
-    - run: echo "GITHUB_REF: $GITHUB_REF"
+    - run: echo GITHUB_REF: $GITHUB_REF
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag my-image-name:${{ github.ref }}
