@@ -16,3 +16,5 @@ jobs:
         name: redpillanalytics/docker-gradle
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+        snapshot: true
+        dockerfile: Dockerfile
