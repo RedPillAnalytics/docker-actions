@@ -1,0 +1,14 @@
+
+name: Test Docker Gradle
+on: [push,pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: pangzineng/Github-Action-One-Click-Docker@master
+      with:
+        docker_namespace: RedPillAnalytics
+        docker_image_name: docker-gradle
+        docker_username: ${{ secrets.DOCKER_USERNAME }}
+        docker_password: ${{ secrets.DOCKER_PASSWORD }}
