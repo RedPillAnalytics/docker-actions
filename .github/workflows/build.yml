@@ -1,13 +1,10 @@
 
 name: Test Docker Gradle
-on: [push,pull_request]
+on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
     - uses: pangzineng/Github-Action-One-Click-Docker@master
-      with:
-        DOCKER_NAMESPACE: redpillanalytics
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
