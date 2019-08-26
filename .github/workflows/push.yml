@@ -8,9 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Build the Docker image
-      run: docker build . -t redpillanalytics/docker-gradle:latest
     - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKER_USERNAME}} -p ${{ secrets.DOCKER_PASSWORD}}
+    - name: Pull latest image
+      run: docker pull redpillanalytics/docker-gradle:latest
+    - name: Build the Docker image
+      run: docker build . -t redpillanalytics/docker-gradle:latest
     - name: Push Latest
       run: docker push docker push redpillanalytics/docker-gradle docker-gradle:latest
