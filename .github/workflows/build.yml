@@ -8,7 +8,6 @@ jobs:
     - uses: actions/checkout@master
     - uses: pangzineng/Github-Action-One-Click-Docker@master
       with:
-        docker_namespace: redpillanalytics
-        docker_image_name: docker-gradle
-        docker_username: ${{ secrets.DOCKER_USERNAME }}
-        docker_password: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_NAMESPACE: redpillanalytics
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
