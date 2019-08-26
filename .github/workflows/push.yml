@@ -13,6 +13,6 @@ jobs:
     - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKER_USERNAME}} -p ${{ secrets.DOCKER_PASSWORD}}
     - name: Push Snapshot
-      run: docker push ${{ join( github.repository, ':', github.sha ) }}
+      run: docker push ${{ join( [github.repository, ':'], github.sha ) }}
     - name: Push Latest
       run: docker push docker push ${{ join( github.repository, ':latest) }}
