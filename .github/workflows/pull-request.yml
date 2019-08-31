@@ -6,10 +6,8 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Login to Docker Hub
-      run: docker login -u ${{ secrets.DOCKER_USERNAME}} -p ${{ secrets.DOCKER_PASSWORD}}
-    - name: Pull latest image
-      run: docker pull redpillanalytics/docker-gradle:latest
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Build the Docker image
-      run: docker build . -t redpillanalytics/docker-gradle:${{ github.sha }}
+      run: docker build . -t ${{ secrets.DOCKER_OWNER }}/${{ github.ref }}:${{ github.sha }}
     - name: Push Snapshot
-      run: docker push redpillanalytics/docker-gradle:${{ github.sha }}
+      run: docker push ${{ secrets.DOCKER_OWNER }}/${{ github.ref }}:${{ github.sha }}
