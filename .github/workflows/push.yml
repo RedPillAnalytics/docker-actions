@@ -8,11 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Dump GitHub context
-      run: echo ${{ toJson(github) }}
     - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Build the Docker image
-      run: docker build . -t ${{ secrets.DOCKER_OWNER }}/${{ github.ref }}:latest
+      run: docker build . -t redpillanalytics/docker-build:latest
     - name: Push Latest
-      run: docker push ${{ secrets.DOCKER_OWNER }}/${{ github.ref }}:latest
+      run: docker push redpillanalytics/docker-build:latest
