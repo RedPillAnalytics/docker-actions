@@ -1,10 +1,8 @@
-FROM gradle:latest
+FROM ubuntu:latest
 USER root
 
-ARG gradleUserHome=.gradle
-ENV GRADLE_USER_HOME=$gradleUserHome
+ARG envVar=environemnt-variable
+ENV ENV_VAR=$envVar
 
 # Run the Update
 RUN apt-get update && apt-get upgrade -y
-
-ENTRYPOINT ["/usr/bin/gradle"]
