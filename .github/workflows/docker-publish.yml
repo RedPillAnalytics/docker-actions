@@ -1,0 +1,13 @@
+name: Build and Publish Docker Image
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Build and Publish Image
+      run: ./docker-publish.sh ${{ secrets.DOCKER_USERNAME }} ${{ secrets.DOCKER_PASSWORD }}
