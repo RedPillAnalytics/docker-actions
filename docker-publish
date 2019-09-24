@@ -21,7 +21,7 @@ GIT_TAG=`echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g"`
 
 # IF GITHUB_REF doesn't exist, then latest
 # If this is a TAG, then use a TAG
-# If this is a BRANCH, then use BRANCH
+# If this is a BRANCH, then use BRANCH (unless branch is master)
 # Else use latest
 if [ -z $GITHUB_REF ]
 then
@@ -29,7 +29,7 @@ then
 elif [ $GIT_TAG != $GITHUB_REF ]
 then
   TAG=$GIT_TAG
-elif [ $BRANCH != $GITHUB_REF ]
+elif [ $BRANCH != $GITHUB_REF ] && [ $BRANCH != 'master' ]
 then
   TAG=$BRANCH
 else
