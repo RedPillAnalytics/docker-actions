@@ -2,7 +2,7 @@
 ME=`basename "$0"`
 
 # Initial values
-DOCKERFILE='.'
+DIRECTORY='.'
 
 # image may be NULL
 IMAGE=`echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]'`
