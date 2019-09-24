@@ -10,4 +10,4 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Build and Publish Image
-      run: ./docker-publish.sh ${{ secrets.DOCKER_USERNAME }} ${{ secrets.DOCKER_PASSWORD }}
+      run: ./docker-publish -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}

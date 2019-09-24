@@ -1,56 +1,85 @@
 #!/bin/bash
-INPUT_USERNAME=$1
-INPUT_PASSWORD=$2
-INPUT_SNAPSHOT=$3
-INPUT_REGISTRY=$4
-INPUT_NAME=`echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]'`
+ME=`basename "$0"`
 
-# echo "Repository: ${INPUT_NAME}"
+# Initial values
+DOCKERFILE='.'
 
-if [ -z "${INPUT_USERNAME}" ]; then
-  echo "Unable to find the docker repository username."
+# image may be NULL
+IMAGE=`echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]'`
+
+# branch may be NULL
+BRANCH=`echo $GITHUB_REF | sed -e "s/refs\/heads\///g"`
+
+# if this is a PR, then set BRANCH to the MERGING branch
+if [ $GITHUB_HEAD_REF ] 
+then
+  BRANCH=$GITHUB_HEAD_REF
+fi
+
+# capture the GIT_TAG or NULL
+GIT_TAG=`echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g"`
+
+# IF GITHUB_REF doesn't exist, then latest
+# If this is a TAG, then use a TAG
+# If this is a BRANCH, then use BRANCH
+# Else use latest
+if [ -z $GITHUB_REF ]
+then
+  TAG='latest'
+elif [ $GIT_TAG != $GITHUB_REF ]
+then
+  TAG=$GIT_TAG
+elif [ $BRANCH != $GITHUB_REF ]
+then
+  TAG=$BRANCH
+else
+  TAG='latest'
+fi
+
+# Process CL Args
+while getopts ":d:u:p:r:t:i:sh" opt; do
+  case ${opt} in
+    d ) # directory
+      DIRECTORY=$OPTARG;;
+    u ) # username
+      USERNAME=$OPTARG;;
+    p ) # password
+      PASSWORD=$OPTARG;;
+    r ) # password
+      REGISTRY=$OPTARG;;
+    s ) # sha
+      SHA=true;;
+    t ) # tag
+      TAG=$OPTARG;;
+    i ) # image
+      IMAGE=$OPTARG;;
+    \? )
+      echo "Invalid option: -$OPTARG" 1>&2
+      exit 1
+      ;;
+  esac
+done
+
+DOCKERNAME="${IMAGE}:${TAG}"
+
+if [ -z $USERNAME ] || [ -z $PASSWORD ]
+then
+  echo "Username (-u) or Password (-p) was not specified."
   exit 1
 fi
 
-if [ -z "${INPUT_PASSWORD}" ]; then
-  echo "Unable to find the docker repository password."
-  exit 1
-fi
+docker login -u ${USERNAME} -p ${PASSWORD}
 
-# If a PR, then use the merging branch
-[[ "$GITHUB_HEAD_REF" ]] && BRANCH="${GITHUB_HEAD_REF}" || BRANCH=$(echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g")
+# build and tag the known version
+docker build -t $DOCKERNAME $DIRECTORY
+docker push $DOCKERNAME
 
-if [ "${BRANCH}" == "master" ]; then
-  BRANCH="latest"
-fi;
-
-# if contains /refs/tags/
-if [ $(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g") != ${GITHUB_REF} ]; then
-  BRANCH="latest"
-fi;
-
-# echo "Branch: ${BRANCH}"
-
-DOCKERNAME="${INPUT_NAME}:${BRANCH}"
-
-echo "Docker Name: ${DOCKERNAME}"
-
-# CUSTOMDOCKERFILE=""
-# if [ ! -z "${INPUT_DOCKERFILE}" ]; then
-#   CUSTOMDOCKERFILE="-f ${INPUT_DOCKERFILE}"
-# fi
-
-docker login -u ${INPUT_USERNAME} -p ${INPUT_PASSWORD} ${INPUT_REGISTRY}
-
-# go ahead and build and create both tags. Doesn't cost anything
-SHA_DOCKER_NAME="${INPUT_NAME}:${GITHUB_SHA}"
-docker build $CUSTOMDOCKERFILE -t ${DOCKERNAME} -t ${SHA_DOCKER_NAME} .
-
-docker push ${DOCKERNAME}
-
-# if either snapshot or a PR, then push the SHA version
-if [ "${INPUT_SNAPSHOT}" == "true" ]; then
-  docker push ${SHA_DOCKER_NAME}
+# if requested, and we know the SHA, then build a SHA version
+if [ "$SHA" ] && [ "$GITHUB_SHA" ]
+then
+  DOCKERSHA="${IMAGE}:${GITHUB_SHA}"
+  docker build -t $DOCKERSHA $DIRECTORY
+  docker push $DOCKERSHA
 fi
 
 docker logout

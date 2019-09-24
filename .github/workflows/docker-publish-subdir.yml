@@ -1,0 +1,24 @@
+name: Build and Publish Docker Image
+on:
+  push:
+    branches:
+    - master
+    paths:
+    # - '*'
+    - 'subdir/*'
+  pull_request:
+    paths:
+    # - '*'
+    - 'subdir/*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Download Installation Media
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: aws s3 cp s3://software.redpillanalytics.io/path/software.rpm ./subdir/. --quiet
+    - name: Build and Publish Image
+      run: ./docker-publish -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} -d subdir
